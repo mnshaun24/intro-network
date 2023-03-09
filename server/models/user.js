@@ -24,12 +24,16 @@ const UserSchema = new Schema({
   },
   picturePath: {
     type: String,
-    deafult: ""
+    default: ""
   },
   location: String,
   occupation: String,
+  savedPosts: {
+    type: Array,
+    default: []
+  },
 });
 
 const User = model("User", UserSchema);
 
-module.exports = User;
+export default User;
