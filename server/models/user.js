@@ -24,13 +24,13 @@ const UserSchema = new Schema({
   },
   picturePath: {
     type: String,
-    default: ""
+    default: "",
   },
   location: String,
   occupation: String,
   savedPosts: {
     type: Array,
-    default: []
+    default: [],
   },
 });
 
