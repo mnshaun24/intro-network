@@ -29,7 +29,7 @@ export const getUserSavedPosts = async (req, res) => {
 };
 
 // UPDATE
-export const saveDeletePosts = async (req, res) => {
+export const saveDeleteSavedPosts = async (req, res) => {
   try {
     const { id, postId } = req.params;
     const user = await User.findById(id);
@@ -50,6 +50,28 @@ export const saveDeletePosts = async (req, res) => {
     });
 
     res.status(200).json(formattedPosts);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};
+
+export const updateUserProfile = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+}
+
+// DELETE
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await User.findOneAndDelete(id);
+
+    res.status(200).json({ message: "User deleted successfully" });
   } catch (err) {
     res.status(404).json({ message: err.message });
   }
