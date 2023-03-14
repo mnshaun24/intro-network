@@ -58,11 +58,14 @@ export const saveDeleteSavedPosts = async (req, res) => {
 export const updateUserProfile = async (req, res) => {
   try {
     const { id } = req.params;
+    const { body } = req.body;
 
+    const updatedProfile = await User.findOneAndUpdate(id, body, { new: true });
+    res.status(200).json({ message: "Profile updated", updatedProfile });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
-}
+};
 
 // DELETE
 export const deleteUser = async (req, res) => {
