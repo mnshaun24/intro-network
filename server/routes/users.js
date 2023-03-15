@@ -1,4 +1,4 @@
-import { Router } from "express";
+import express from "express";
 import {
     getUser,
     getUserSavedPosts,
@@ -8,7 +8,7 @@ import {
 } from "../controllers/users.js";
 import { verifyToken } from "../middleware/auth.js";
 
-const router = Router();
+const router = express.Router();
 
 // READ
 router.get("/:id", verifyToken, getUser);

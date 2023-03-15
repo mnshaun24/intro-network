@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const postSchema = mongoose.Schema(
   {
+    userId: {
+      type: String,
+      required: true,
+    },
     firstName: {
       type: String,
       required: true,
@@ -21,6 +25,7 @@ const postSchema = mongoose.Schema(
       maxLength: 2000,
     },
     userPicturePath: String,
+    picturePath: String,
     likes: {
       type: Map,
       of: Boolean,
