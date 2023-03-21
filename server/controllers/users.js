@@ -31,13 +31,14 @@ export const getUserSavedPosts = async (req, res) => {
 // UPDATE
 export const saveDeleteSavedPosts = async (req, res) => {
   try {
+    console.log(req.params);
     const { id, postId } = req.params;
     const user = await User.findById(id);
 
     if (user.savedPosts.includes(postId)) {
       user.savedPosts = user.savedPosts.filter((id) => id !== postId);
     } else {
-      user.savedPosts(push(postId));
+      user.savedPosts.push(postId);
     }
 
     await user.save();
@@ -45,11 +46,11 @@ export const saveDeleteSavedPosts = async (req, res) => {
     const posts = await Promise.all(
       user.savedPosts.map((id) => User.findById(id))
     );
-    const formattedPosts = posts.map(({ _id, description }) => {
-      return { _id, description };
-    });
+    // const formattedPosts = posts.map(({ _id, description }) => {
+    //   return { _id, description };
+    // });
 
-    res.status(200).json(formattedPosts);
+    res.status(200).json(posts);
   } catch (err) {
     res.status(404).json({ message: err.message });
   }
@@ -58,9 +59,10 @@ export const saveDeleteSavedPosts = async (req, res) => {
 export const updateUserProfile = async (req, res) => {
   try {
     const { id } = req.params;
-    const { body } = req.body;
 
-    const updatedProfile = await User.findOneAndUpdate(id, body, { new: true });
+    const updatedProfile = await User.findOneAndUpdate(id, req.body, {
+      new: true,
+    });
     res.status(200).json({ message: "Profile updated", updatedProfile });
   } catch (err) {
     res.status(400).json({ message: err.message });
