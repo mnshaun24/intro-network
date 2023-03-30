@@ -8,7 +8,6 @@ import { ThemeContext } from "state/context";
 function App() {
   // Theme change logic
   function getLocalStorageTheme() {
-    console.log(localStorage);
     return localStorage.getItem("theme")
       ? localStorage.getItem("theme")
       : "light";
@@ -41,10 +40,12 @@ function App() {
           onChange={toggleTheme}
           checked={theme === "dark"}
         />
+
+        {/* //TODO Root path is set as welcome page. Feed is set as post feed. Add blogs */}
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<LoginPage />} />
-            <Route path="/home" element={<HomePage />} />
+            <Route path="/home" element={<LoginPage />} />
             <Route path="/profile/:userId" element={<ProfilePage />} />
           </Routes>
         </BrowserRouter>
