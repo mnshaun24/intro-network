@@ -45,12 +45,58 @@ const initialValuesLogin = {
 
 const LoginForm = () => {
   const [pageType, setPageType] = useState("login");
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   // const isNonMobileScreen = useMediaQuery("(min-width: 600px)");
   const isLogin = pageType === "login";
   const isRegister = pageType === "register";
 
-  const handleFormSubmit = async (values, onSubmitProps) => {};
+  const register = async (values, onSubmitProps) => {
+    const formData = new FormData();
+    for (let value in values) {
+      formData.append(value, values[value]);
+    }
+    formData.append("picturePath", values.picture.name);
+
+    const savedUserResponse = await fetch(
+      "http://localhost:3001/auth/register",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+    const savedUser = await savedUserResponse.json();
+    onSubmitProps.resetForm();
+
+    if (savedUser) setPageType("login");
+  };
+
+  const login = async (values, onSubmitProps) => {
+    const loggedInUserResponse = await fetch(
+      "http://localhost:3001/auth/login",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      }
+    );
+    const loggedIn = await loggedInUserResponse.json();
+    onSubmitProps.resetForm();
+    if (loggedIn) {
+      dispatch(
+        setLogin({
+          user: loggedIn.user,
+          token: loggedIn.token,
+        })
+      );
+      navigate("/home");
+    }
+  };
+
+  const handleFormSubmit = async (values, onSubmitProps) => {
+    if (isLogin) await login(values, onSubmitProps);
+    if (isRegister) await register(values, onSubmitProps);
+  };
 
   return (
     <Formik
@@ -68,6 +114,14 @@ const LoginForm = () => {
         setFieldValue,
         resetForm,
       }) => (
+        <section className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screnn lg:py-0">
+        <div className="w-full rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0 dark:border">
+          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+            {isLogin && (
+              <>
+              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl allText">
+                Sign in to your account</h1></>
+            )}
         <form onSubmit={handleSubmit}>
           <section className="grid-cols-4 gap-7">
             {isRegister && (
@@ -153,19 +207,18 @@ const LoginForm = () => {
                         {...getRootProps()}
                         className="border-2 border-dashed p-4 cursor-pointer"
                       >
-                        <input type="file" {...getInputProps()}>
-                          {!values.picture ? (
-                            <p>Add Picture Here</p>
-                          ) : (
-                            <>
-                              {" "}
-                              <p className="flexBetweenCenter">
-                                {values.picture.name}
-                              </p>
-                              <i class="uil uil-pen"></i>
-                            </>
-                          )}
-                        </input>
+                        <input type="file" {...getInputProps()} />
+                        {!values.picture ? (
+                          <p>Add Picture Here</p>
+                        ) : (
+                          <>
+                            {" "}
+                            <p className="flexBetweenCenter">
+                              {values.picture.name}
+                            </p>
+                            <i class="uil uil-pen"></i>
+                          </>
+                        )}
                       </div>
                     )}
                   </Dropzone>
@@ -173,53 +226,63 @@ const LoginForm = () => {
               </>
             )}
 
-<label
-                  for="Email"
-                  className="block mb-2 text-sm font-medium"
-                >
-                  Email
-                </label>
-                <input
-                  type="text"
-                  name="email"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 col-span-4 sm:text-sm sm:col-span-2 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.email}
-                  error={
-                    Boolean(touched.email) && Boolean(errors.email)
-                  }
-                  helperText={touched.email && errors.email}
-                ></input>
-<label
-                  for="Password"
-                  className="block mb-2 text-sm font-medium"
-                >
-                  password
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 col-span-4 sm:text-sm sm:col-span-2 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.password}
-                  error={
-                    Boolean(touched.password) && Boolean(errors.password)
-                  }
-                  helperText={touched.password && errors.password}
-                ></input>
+            <label for="Email" className="block mb-2 text-sm font-medium">
+              Email
+            </label>
+            <input
+              type="text"
+              name="email"
+              className="bg-gray-50 border border-gray-300 text-gray-900 col-span-4 sm:text-sm sm:col-span-2 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.email}
+              error={Boolean(touched.email) && Boolean(errors.email)}
+              helperText={touched.email && errors.email}
+            />
+            <label for="Password" className="block mb-2 text-sm font-medium">
+              password
+            </label>
+            <input
+              type="password"
+              name="password"
+              placeholder="**********"
+              className="bg-gray-50 border border-gray-300 text-gray-900 col-span-4 sm:text-sm sm:col-span-2 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.password}
+              error={Boolean(touched.password) && Boolean(errors.password)}
+              helperText={touched.password && errors.password}
+            />
+          </section>
+          <div className="flex items-center justify-between">
+            <div className="flex items-start">
+              <div className="flex items-center h-5">
+                <input id="remember" aria-describedby="remember" type="checkbox" className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-purple-300" required="" />
 
-          </section>
-          <section>
-          <button className="btn"
-          onClick={() => {
-            setPageType(isLogin ? "register" : "login");
-            resetForm();
-          }}>{isLogin ? "LOGIN" : "REGISTER"}</button>
-          {isLogin ? "No account? Sign Up" : "Login here"}
-          </section>
+              </div>
+              <div className="ml-3 text-sm">
+                <label for="remember" className="text-gray-500">Remember me</label>
+              </div>
+            </div>
+            <a href="#" className="text-sm font-medium hover:underline">Forgot password?</a>
+            </div>
+
+            <button type="submit" className="btn">
+              {isLogin ? "LOGIN" : "REGISTER"}
+            </button>
+            <p
+              className="underline hover:cursor-pointer text-base"
+              onClick={() => {
+                setPageType(isLogin ? "register" : "login");
+                resetForm();
+              }}
+            >
+              {isLogin ? "No account? Sign Up" : "Login here"}
+            </p>
         </form>
+        </div>
+        </div>
+        </section>
       )}
     </Formik>
   );
