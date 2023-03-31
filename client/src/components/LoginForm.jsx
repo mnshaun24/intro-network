@@ -114,18 +114,19 @@ const LoginForm = () => {
         setFieldValue,
         resetForm,
       }) => (
-        <section className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screnn lg:py-0">
-        <div className="w-full rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0 dark:border">
+        <section className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+        <div className="w-full rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0 dark:border bg-orange-50 login-container">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             {isLogin && (
               <>
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl allText">
                 Sign in to your account</h1></>
             )}
-        <form onSubmit={handleSubmit}>
-          <section className="grid-cols-4 gap-7">
+        <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
+          <section>
             {isRegister && (
-              <>
+              <div className="grid grid-cols-4 gap-2">
+                <div className="col-span-2">
                 <label
                   for="First Name"
                   className="block mb-2 text-sm font-medium"
@@ -135,7 +136,7 @@ const LoginForm = () => {
                 <input
                   type="text"
                   name="firstName"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 col-span-4 sm:text-sm sm:col-span-2 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                  className="bg-gray-50 form-input border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.firstName}
@@ -144,6 +145,8 @@ const LoginForm = () => {
                   }
                   helperText={touched.firstName && errors.firstName}
                 ></input>
+                </div>
+                <div className="col-span-2">
                 <label
                   for="Last Name"
                   className="block mb-2 text-sm font-medium"
@@ -153,23 +156,24 @@ const LoginForm = () => {
                 <input
                   type="text"
                   name="lastName"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 col-span-4 sm:text-sm sm:col-span-2 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                  className="bg-gray-50 form-input border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.lastName}
                   error={Boolean(touched.lastName) && Boolean(errors.lastName)}
                   helperText={touched.lastName && errors.lastName}
                 ></input>
+                </div>
                 <label
                   for="occupation"
-                  className="block mb-2 text-sm font-medium"
+                  className="block text-sm font-medium"
                 >
                   Occupation
                 </label>
                 <input
                   type="text"
                   name="occupation"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 col-span-4 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                  className="bg-gray-50 border form-input border-gray-300 text-gray-900 col-span-4 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.occupation}
@@ -180,14 +184,14 @@ const LoginForm = () => {
                 ></input>
                 <label
                   for="Location"
-                  className="block mb-2 text-sm font-medium"
+                  className="block text-sm font-medium"
                 >
                   Location
                 </label>
                 <input
                   type="text"
                   name="location"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 col-span-4 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                  className="bg-gray-50 form-input border border-gray-300 text-gray-900 col-span-4 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.location}
@@ -223,30 +227,30 @@ const LoginForm = () => {
                     )}
                   </Dropzone>
                 </div>
-              </>
+              </div>
             )}
 
-            <label for="Email" className="block mb-2 text-sm font-medium">
+            <label for="Email" className="block my-2 text-sm font-medium">
               Email
             </label>
             <input
               type="text"
               name="email"
-              className="bg-gray-50 border border-gray-300 text-gray-900 col-span-4 sm:text-sm sm:col-span-2 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+              className="bg-gray-50 form-input border border-gray-300 text-gray-900 col-span-4 sm:text-sm sm:col-span-2 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
               onBlur={handleBlur}
               onChange={handleChange}
               value={values.email}
               error={Boolean(touched.email) && Boolean(errors.email)}
               helperText={touched.email && errors.email}
             />
-            <label for="Password" className="block mb-2 text-sm font-medium">
-              password
+            <label for="Password" className="block my-2 text-sm font-medium">
+              Password
             </label>
             <input
               type="password"
               name="password"
               placeholder="**********"
-              className="bg-gray-50 border border-gray-300 text-gray-900 col-span-4 sm:text-sm sm:col-span-2 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+              className="bg-gray-50 form-input border border-gray-300 text-gray-900 col-span-4 sm:text-sm sm:col-span-2 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
               onBlur={handleBlur}
               onChange={handleChange}
               value={values.password}
@@ -261,10 +265,10 @@ const LoginForm = () => {
 
               </div>
               <div className="ml-3 text-sm">
-                <label for="remember" className="text-gray-500">Remember me</label>
+                <label for="remember" className="text-gray-500 remember-text">Remember me</label>
               </div>
             </div>
-            <a href="#" className="text-sm font-medium hover:underline">Forgot password?</a>
+            <a href="#" className="text-sm font-medium hover:underline text-blue-700 forgot-password-text">Forgot password?</a>
             </div>
 
             <button type="submit" className="btn">

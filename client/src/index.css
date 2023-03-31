@@ -5,7 +5,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Open+Sans:wght@400;700&family=Rubik:wght@400;500;700&family=Staatliches&display=swap');
 
 html,
-body,
+body {
+    background: #EDEAE5;
+}
 #root,
 .app {
     height: 100%;
@@ -41,6 +43,24 @@ body,
 
 #dark .allText {
     color: #EDEAE5;
+}
+
+#dark .login-container {
+    background-color: #1f2937;
+    border-color: #374151;
+    border-width: 1px;
+}
+
+#dark .remember-text {
+    color: #d1d5db;
+}
+
+#dark .forgot-password-text {
+    color: #3b82f6
+}
+
+#dark .form-input {
+    background-color: #374151;
 }
 
 /* Media Queries */
