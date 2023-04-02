@@ -29,9 +29,9 @@ const loginSchema = yup.object().shape({
 });
 
 const initialValuesRegister = {
-  firstName: "",
-  lastName: "",
-  email: "",
+  firstName: "test",
+  lastName: "test",
+  email: "test",
   password: "",
   location: "",
   occupation: "",
@@ -39,8 +39,8 @@ const initialValuesRegister = {
 };
 
 const initialValuesLogin = {
-  email: "",
-  password: "",
+  email: "test",
+  password: "test",
 };
 
 const LoginForm = () => {
@@ -100,6 +100,10 @@ const LoginForm = () => {
     if (isRegister) await register(values, onSubmitProps);
   };
 
+  // const submitTest = () => {
+  //   console.log("test test")
+  // }
+
   return (
     <Formik
       onSubmit={handleFormSubmit}
@@ -145,8 +149,8 @@ const LoginForm = () => {
                           onChange={handleChange}
                           value={values.firstName}
                           error={
-                            Boolean(touched.firstName) ?
-                            Boolean(errors.firstName) : undefined
+                            touched.firstName ?
+                            errors.firstName : undefined
                           }
                           helpertext={touched.firstName && errors.firstName}
                         ></input>
@@ -166,8 +170,8 @@ const LoginForm = () => {
                           onChange={handleChange}
                           value={values.lastName}
                           error={
-                            Boolean(touched.lastName) ?
-                            Boolean(errors.lastName) : undefined
+                            touched.lastName ?
+                            errors.lastName : undefined
                           }
                           helpertext={touched.lastName && errors.lastName}
                         ></input>
@@ -186,8 +190,8 @@ const LoginForm = () => {
                         onChange={handleChange}
                         value={values.occupation}
                         error={
-                          Boolean(touched.occupation) ?
-                          Boolean(errors.occupation) : undefined
+                          touched.occupation ?
+                          errors.occupation : undefined
                         }
                         helpertext={touched.occupation && errors.occupation}
                       ></input>
@@ -205,7 +209,7 @@ const LoginForm = () => {
                         onChange={handleChange}
                         value={values.location}
                         error={
-                          Boolean(touched.location) ? Boolean(errors.location) : undefined
+                          touched.location ? errors.location : undefined
                         }
                         helpertext={touched.location && errors.location}
                       ></input>
@@ -251,7 +255,7 @@ const LoginForm = () => {
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.email}
-                    error={Boolean(touched.email) ? Boolean(errors.email) : undefined}
+                    error={touched.email ? errors.email : undefined}
                     helpertext={touched.email && errors.email}
                   />
                   <label
@@ -269,7 +273,7 @@ const LoginForm = () => {
                     onChange={handleChange}
                     value={values.password}
                     error={
-                      Boolean(touched.password) ? Boolean(errors.password) : undefined
+                      touched.password ? errors.password : undefined
                     }
                     helpertext={touched.password && errors.password}
                   />
