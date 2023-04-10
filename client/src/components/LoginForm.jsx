@@ -95,10 +95,10 @@ const LoginForm = () => {
     }
   };
 
-  const handleFormSubmit = () => {
-    // if (isLogin) await login(values, onSubmitProps);
-    // if (isRegister) await register(values, onSubmitProps);
-    console.log("hello")
+  const handleFormSubmit = async (values, onSubmitProps) => {
+    console.log("attempting")
+    if (isLogin) await login(values, onSubmitProps);
+    if (isRegister) await register(values, onSubmitProps);
   };
 
 
@@ -106,7 +106,7 @@ const LoginForm = () => {
     <Formik
     initialValues={isLogin ? initialValuesLogin : initialValuesRegister}
     validationSchema={isLogin ? loginSchema : registerSchema}
-    onSubmit={handleFormSubmit}
+    onSubmit={handleFormSubmit()}
     >
       {(
         values,
