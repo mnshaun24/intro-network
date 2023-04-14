@@ -5,6 +5,8 @@ import axios from "axios";
 const LoginFormTwo = () => {
  const register = async (values) => {
 
+  // * Append image data with rest of values
+
   const savedUserResponse = axios.post("http://localhost:3001/auth/register", values).catch((err) => {
     if(err) {
       console.log(err)
@@ -15,14 +17,30 @@ const LoginFormTwo = () => {
   }
  }
 
+ const login = async (values) => {
+  
+  const loggedInUserResponse = axios.post("http://localhost:3001/auth/login", values).catch((err) => {
+    if(err) {
+      console.log(err)
+    }
+  })
+  if(loggedInUserResponse) {
+    console.log("did it")
+  }
+ }
+
+ const handleFormSubmit = async (values) => {
+  await register(values)
+ }
+
   return (
     <Formik
       initialValues={{ firstName: "", lastName: "", email: "", password: "" }}
       onSubmit={(values, { setSubmitting }) => {
         setTimeout(() => {
-          register(values);
+          handleFormSubmit(values);
           setSubmitting(false);
-        }, 400);
+        }, 200);
       }}
     >
       <Form>
