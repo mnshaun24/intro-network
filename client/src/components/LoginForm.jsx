@@ -15,9 +15,9 @@ const registerSchema = yup.object().shape({
     .email("Please input a valid email address")
     .required("required"),
   password: yup.string().required("required"),
-  location: yup.string().required("Please input a valid location"),
-  occupation: yup.string().required("Please input a valid occupation"),
-  picture: yup.string().required("required"),
+  location: yup.string(),
+  occupation: yup.string(),
+  picture: yup.string(),
 });
 
 const loginSchema = yup.object().shape({
@@ -29,8 +29,8 @@ const loginSchema = yup.object().shape({
 });
 
 const initialValuesRegister = {
-  firstName: "test",
-  lastName: "test",
+  firstName: "",
+  lastName: "",
   email: "",
   password: "",
   location: "",
@@ -96,7 +96,7 @@ const LoginForm = () => {
   };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
-    console.log("attempting")
+    console.log(values, "attempting")
     if (isLogin) await login(values, onSubmitProps);
     if (isRegister) await register(values, onSubmitProps);
   };
@@ -191,7 +191,7 @@ const LoginForm = () => {
                       ></input>
                       <div className="col-span-4 border border-solid rounded p-4">
                         <Dropzone
-                          acceptedFiled=".jpg,.jpeg,.png"
+                          acceptedFiles=".jpg,.jpeg,.png"
                           multiple={false}
                           onDrop={(acceptedFiles) =>
                             setFieldValue("picture", acceptedFiles[0])
