@@ -1,299 +1,255 @@
 import { useState } from "react";
-import { Formik } from "formik";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import axios from "axios";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogin } from "state";
-import Dropzone from "react-dropzone";
-// import { UilPen } from "@iconscout/react-unicons";
 
-const registerSchema = yup.object().shape({
-  firstName: yup.string().required("Please input a valid first name"),
-  lastName: yup.string().required("Please input a valid last name"),
-  email: yup
-    .string()
-    .email("Please input a valid email address")
-    .required("required"),
-  password: yup.string().required("required"),
-  location: yup.string(),
-  occupation: yup.string(),
-  picture: yup.string(),
-});
-
-const loginSchema = yup.object().shape({
-  email: yup
-    .string()
-    .email("Please input a valid email address")
-    .required("required"),
-  password: yup.string().required("required"),
-});
-
-const initialValuesRegister = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  password: "",
-  location: "",
-  occupation: "",
-  picture: "",
-};
-
-const initialValuesLogin = {
-  email: "",
-  password: "test",
-};
-
-const LoginForm = () => {
+const LoginFormTwo = () => {
   const [pageType, setPageType] = useState("login");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isLogin = pageType === "login";
   const isRegister = pageType === "register";
 
-  const register = async (values, onSubmitProps) => {
-    // * FormData is here to allow passing image along with rest of form data
-    const formData = new FormData();
-    for (let value in values) {
-      formData.append(value, values[value]);
-    }
-    formData.append("picturePath", values.picture.name);
+  const registerSchema = yup.object().shape({
+    firstName: yup.string().required("Please input a valid first name"),
+    lastName: yup.string().required("Please input a valid last name"),
+    email: yup
+      .string()
+      .email("Please input a valid email address")
+      .required("required"),
+    password: yup.string().required("required"),
+    location: yup.string(),
+    occupation: yup.string(),
+    picture: yup.string(),
+  });
 
-    const savedUserResponse = await fetch(
-      "http://localhost:3001/auth/register",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-    const savedUser = await savedUserResponse.json();
-    onSubmitProps.resetForm();
+  const loginSchema = yup.object().shape({
+    email: yup
+      .string()
+      .email("Please input a valid email address")
+      .required("required"),
+    password: yup.string().required("required"),
+  });
 
-    if (savedUser) {
+  const initialValuesRegister = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    location: "",
+    occupation: "",
+    picture: "",
+  };
+
+  const initialValuesLogin = {
+    email: "",
+    password: "",
+  };
+
+  const register = async (values) => {
+    console.log(values)
+    const savedUserResponse = axios
+      .post("http://localhost:3001/auth/register", values)
+      .catch((err) => {
+        if (err) {
+          console.log(err);
+        }
+      });
+    if (savedUserResponse) {
+      console.log(savedUserResponse);
       setPageType("login");
     }
   };
 
-  const login = async (values, onSubmitProps) => {
-    const loggedInUserResponse = await fetch(
-      "http://localhost:3001/auth/login",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+  const login = async (values) => {
+    const loggedInUserResponse = axios
+    .post("http://localhost:3001/auth/login",
+    {
+      values,
+      headers: {
+        "Content-Type" : "application/json"
       }
-    );
-    const loggedIn = await loggedInUserResponse.json();
-    onSubmitProps.resetForm();
-    if (loggedIn) {
+    })
+    .catch((err) => {
+      if(err) {
+        console.log(err);
+      }
+    });
+    if (loggedInUserResponse) {
+      console.log("logged in");
       dispatch(
         setLogin({
-          user: loggedIn.user,
-          token: loggedIn.token,
+          user: loggedInUserResponse.user,
+          token: loggedInUserResponse.token,
         })
       );
       navigate("/home");
     }
-  };
+  }
 
-  const handleFormSubmit = async (values, onSubmitProps) => {
-    console.log(values, "attempting")
-    if (isLogin) await login(values, onSubmitProps);
-    if (isRegister) await register(values, onSubmitProps);
+  const submitHandler = async (values) => {
+    if (isRegister) await register(values);
+    if (isLogin) await login(values);
   };
-
 
   return (
     <Formik
     initialValues={isLogin ? initialValuesLogin : initialValuesRegister}
     validationSchema={isLogin ? loginSchema : registerSchema}
-    onSubmit={handleFormSubmit()}
+      onSubmit={(values, { setSubmitting }) => {
+        setTimeout(() => {
+          submitHandler(values);
+          setSubmitting(false);
+        }, 400);
+      }}
     >
-      {(
-        values,
-        handleBlur,
-        handleChange,
-        handleSubmit,
-        setFieldValue,
-      ) => (
-        <section className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-          <div className="w-full rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0 dark:border bg-orange-50 login-container">
-            <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-              {isLogin && (
-                <>
-                  <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl allText">
-                    Sign in to your account
-                  </h1>
-                </>
-              )}
-              <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
-                <section>
-                  {isRegister && (
-                    <div className="grid grid-cols-4 gap-2">
-                      <div className="col-span-2">
-                        <label
-                          htmlFor="firstName"
-                          className="block mb-2 text-sm font-medium"
-                        >
-                          First Name
-                        </label>
-                        <input
-                          type="text"
-                          id="firstName"
-                          className="bg-gray-50 form-input border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                          onBlur={handleBlur}
-                          onChange={handleChange}
-                          value={values.firstName}
-                        ></input>
-                      </div>
-                      <div className="col-span-2">
-                        <label
-                          htmlFor="lastName"
-                          className="block mb-2 text-sm font-medium"
-                        >
-                          Last Name
-                        </label>
-                        <input
-                          type="text"
-                          id="lastName"
-                          className="bg-gray-50 form-input border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                          onBlur={handleBlur}
-                          onChange={handleChange}
-                          value={values.lastName}
-                        ></input>
-                      </div>
-                      <label
-                        htmlFor="occupation"
-                        className="block text-sm font-medium"
-                      >
-                        Occupation
-                      </label>
-                      <input
-                        type="text"
-                        id="occupation"
-                        className="bg-gray-50 border form-input border-gray-300 text-gray-900 col-span-4 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        value={values.occupation}
-                      ></input>
-                      <label
-                        htmlFor="location"
-                        className="block text-sm font-medium"
-                      >
-                        Location
-                      </label>
-                      <input
-                        type="text"
-                        id="location"
-                        className="bg-gray-50 form-input border border-gray-300 text-gray-900 col-span-4 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        value={values.location}
-                      ></input>
-                      <div className="col-span-4 border border-solid rounded p-4">
-                        <Dropzone
-                          acceptedFiles=".jpg,.jpeg,.png"
-                          multiple={false}
-                          onDrop={(acceptedFiles) =>
-                            setFieldValue("picture", acceptedFiles[0])
-                          }
-                        >
-                          {({ getRootProps, getInputProps }) => (
-                            <div
-                              {...getRootProps()}
-                              className="border-2 border-dashed p-4 cursor-pointer"
-                            >
-                              <input type="file" {...getInputProps()} />
-                              {!values.picture ? (
-                                <p>Add Picture Here</p>
-                              ) : (
-                                <>
-                                  {" "}
-                                  <p className="flexBetweenCenter">
-                                    {values.picture.name}
-                                  </p>
-                                  <i class="uil uil-pen"></i>
-                                </>
-                              )}
-                            </div>
-                          )}
-                        </Dropzone>
-                      </div>
-                    </div>
-                  )}
-
-                  <label htmlFor="email" className="block my-2 text-sm font-medium">
-                    Email
-                  </label>
-                  <input
-                    type="text"
-                    id="email"
-                    className="bg-gray-50 form-input border border-gray-300 text-gray-900 col-span-4 sm:text-sm sm:col-span-2 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    value={values.email}
-                  />
-                  <label
-                    htmlFor="password"
-                    className="block my-2 text-sm font-medium"
-                  >
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    id="password"
-                    placeholder="**********"
-                    className="bg-gray-50 form-input border border-gray-300 text-gray-900 col-span-4 sm:text-sm sm:col-span-2 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    value={values.password}
-                  />
-                </section>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-start">
-                    <div className="flex items-center h-5">
-                      <input
-                        id="remember"
-                        aria-describedby="remember"
-                        type="checkbox"
-                        className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-purple-300"
-                        required=""
-                      />
-                    </div>
-                    <div className="ml-3 text-sm">
-                      <label
-                        htmlFor="remember"
-                        className="text-gray-500 remember-text"
-                      >
-                        Remember me
-                      </label>
-                    </div>
+      <section className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0">
+        <div className="w-full rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0 dark:border bg-orange-50 login-container">
+          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+          {isLogin && (
+            <>
+              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl allText">
+                Sign in to your account
+              </h1>
+            </>
+          )}
+          {isRegister && (
+            <>
+              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl allText">
+                Register a new account
+              </h1>
+            </>
+          )}
+          <Form className="space-y-4 md:space-y-6">
+            <section>
+              {isRegister && (
+                <div className="grid grid-cols-4 gap-2">
+                  <div className="col-span-4 md:col-span-2">
+                    <label
+                      htmlFor="firstName"
+                      className="block mb-2 text-sm font-medium"
+                    >
+                      First Name
+                    </label>
+                    <Field
+                      name="firstName"
+                      type="text"
+                      className="bg-gray-50 form-input border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                    />
+                    <ErrorMessage name="firstName" />
                   </div>
-                  <a
-                    href="#"
-                    className="text-sm font-medium hover:underline text-blue-700 forgot-password-text"
-                  >
-                    Forgot password?
-                  </a>
-                </div>
 
-                <button type="submit" className="btn">
-                  {isLogin ? "LOGIN" : "REGISTER"}
-                </button>
-                <p
-                  className="underline hover:cursor-pointer text-base"
-                  onClick={() => {
-                    setPageType(isLogin ? "register" : "login")
-                  }}
+                  <div className="col-span-4 md:col-span-2">
+                    <label
+                      htmlFor="lastName"
+                      className="block mb-2 text-sm font-medium"
+                    >
+                      Last Name
+                    </label>
+                    <Field
+                      name="lastName"
+                      type="text"
+                      className="bg-gray-50 form-input border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                    />
+                    <ErrorMessage name="lastName" />
+                  </div>
+
+                  <label
+                    htmlFor="occupation"
+                    className="block text-sm font-medium"
+                  >
+                    Occupation
+                  </label>
+                  <Field
+                    name="occupation"
+                    type="text"
+                    className="bg-gray-50 border form-input border-gray-300 text-gray-900 col-span-4 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                  />
+                  <ErrorMessage name="Occupation" />
+
+                  <label
+                    htmlFor="location"
+                    className="block text-sm font-medium"
+                  >
+                    Location
+                  </label>
+                  <Field
+                    name="location"
+                    type="text"
+                    className="bg-gray-50 form-input border border-gray-300 text-gray-900 col-span-4 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                  />
+                  <ErrorMessage name="Location" />
+                </div>
+              )}
+
+              <label htmlFor="email" className="block my-2 text-sm font-medium">
+                Email Address
+              </label>
+              <Field
+                name="email"
+                type="email"
+                className="bg-gray-50 form-input border border-gray-300 text-gray-900 col-span-4 sm:text-sm sm:col-span-2 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+              />
+              <ErrorMessage name="email" />
+
+              <label
+                htmlFor="password"
+                className="block my-2 text-sm font-medium"
+              >
+                Password
+              </label>
+              <Field
+                name="password"
+                type="password"
+                className="bg-gray-50 form-input border border-gray-300 text-gray-900 col-span-4 sm:text-sm sm:col-span-2 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+              />
+              <ErrorMessage name="password" />
+            </section>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-start">
+                <div className="flex items-center h-5">
+                  <Field
+                    name="remember"
+                    type="checkbox"
+                    className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-purple-300"
+                  />
+                </div>
+                <label
+                  htmlFor="remember"
+                  className="ml-3 text-sm text-gray-500 remember-text"
                 >
-                  {isLogin ? "No account? Sign Up" : "Login here"}
-                </p>
-              </form>
+                  Remember me
+                </label>
+              </div>
+              <a
+                href="#"
+                className="text-sm font-medium hover:underline text-blue-700 forgot-password-text"
+              >
+                Forgot password?
+              </a>
             </div>
+
+            <button type="submit" className="btn">
+              {isLogin ? "LOGIN" : "REGISTER"}
+            </button>
+          </Form>
+          <p
+            className="underline hover:cursor-pointer text-base"
+            onClick={() => {
+              setPageType(isLogin ? "register" : "login");
+            }}
+          >
+            {isLogin ? "No account? Sign up" : "Login here"}
+          </p>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
     </Formik>
   );
 };
 
-export default LoginForm;
+export default LoginFormTwo;

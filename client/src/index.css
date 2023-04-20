@@ -21,6 +21,12 @@ body {
     align-items: center;
 }
 
+.widgetWrapper {
+    padding: "1.5rem 1.5rem 0.75rem 1.5rem";
+    background-color: aqua;
+    border-radius: ".75rem";
+}
+
 #light {
     background-color: #EDEAE5;
     color: #34363b;

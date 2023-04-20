@@ -2,8 +2,10 @@ import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import HomePage from "pages/homePage";
 import LoginPage from "pages/loginPage";
 import ProfilePage from "pages/profilePage";
+import FeedPage from "pages/feedPage";
 import { useState } from "react";
 import { ThemeContext } from "state/context";
+import { useSelector } from "react-redux";
 
 function App() {
   // Theme change logic
@@ -28,6 +30,8 @@ function App() {
     setLocalStorageTheme();
   };
 
+  const isAuth = Boolean(useSelector((state) => state.token));
+
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       <div id={theme} className="app">
@@ -45,8 +49,15 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<LoginPage />} />
-            <Route path="/home" element={<LoginPage />} />
-            <Route path="/profile/:userId" element={<ProfilePage />} />
+            <Route
+              path="/feed"
+              element={isAuth ? <FeedPage /> : <Navigate to="/" />}
+            />
+            <Route path="/home" element={<HomePage />} />
+            <Route
+              path="/profile/:userId"
+              element={isAuth ? <ProfilePage /> : <Navigate to="/" />}
+            />
           </Routes>
         </BrowserRouter>
       </div>
